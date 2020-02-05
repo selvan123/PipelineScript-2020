@@ -53,7 +53,7 @@ node
 	
 	stage('Publish to Nexus')
     {
-        sh 'mvn deploy:deploy-file -DgroupId=com.cicd -DartifactId=petclinic -Dversion=${BUILD_NUMBER} -DgeneratePom=true -Dpackaging=war -DrepositoryId=nexus-snapshots -Durl=http://10.0.2.18:8081/nexus/content/repositories/petclinic/  -Dfile=/root/.jenkins/workspace/PipelineScript-2020/target/petclinic.war'
+        sh 'mvn deploy:deploy-file -DgroupId=com.cicd -DartifactId=petclinic -Dversion=${BUILD_NUMBER} -DgeneratePom=true -Dpackaging=war -DrepositoryId=nexus-snapshots -Durl=http://10.0.2.18:8081/nexus/content/repositories/petclinic/  -Dfile=/root/.jenkins/workspace/Petclinic/target/petclinic.war'
     }
     
       stage("Deploy to Rundeck")
@@ -71,10 +71,10 @@ node
 	stage('Selenium Testing')
     {
         git url: 'https://github.com/selvan123/petclinic.git'
-        sh "cd /root/.jenkins/workspace/PipelineScript-2020/TestCases"
+        sh "cd /root/.jenkins/workspace/Petclinic/TestCases"
         wrap([$class: 'Xvfb', displayNameOffset: 0, installationName: 'Xvfb', screen: '1600x1200x32']) 
         {
-			sh "sudo bash"
+            sh "sudo bash"
             sh "mvn test"
         }
         
@@ -84,16 +84,15 @@ node
     stage('Performance testing')
     {
         sh "sudo bash"
-		sh "rm -rf /root/.jenkins/workspace/PipelineScript-2020/Petclinic.jmx"
-		sh "rm -rf /root/.jenkins/workspace/PipelineScript-2020/Petclinic.jtl"
-		sh "rm -rf /root/.jenkins/workspace/PipelineScript-2020/Petclinic.xml"
+		sh "rm -rf /root/.jenkins/workspace/Petclinic/Petclinic.jmx"
+		sh "rm -rf /root/.jenkins/workspace/Petclinic/Petclinic.jtl"
+		sh "rm -rf /root/.jenkins/workspace/Petclinic/Petclinic.xml"
 		sh "wget https://labassets.s3-us-west-2.amazonaws.com/Dependencies/Jenkins/Job/Petclinic.jmx"
-
-		sh "sudo /home/ec2-user/jMeter/apache-jmeter-5.1.1/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=xml -n -t /root/.jenkins/workspace/PipelineScript-2020/Petclinic.jmx -l Petclinic.jtl"
+		sh "sudo /home/ec2-user/jMeter/apache-jmeter-5.1.1/bin/jmeter.sh -Jjmeter.save.saveservice.output_format=xml -n -t /root/.jenkins/workspace/Petclinic/Petclinic.jmx -l Petclinic.jtl"
         
     }
 	
-	 stage('Security Testing using ZAP')
+    stage('Security Testing using ZAP')
     {
         sh "cd /var/lib/docker"
         sh "sudo docker run -t owasp/zap2docker-weekly zap-baseline.py -t http://petclinic.3dh3jbeipq.us-west-2.elasticbeanstalk.com/ || true"
