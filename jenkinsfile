@@ -29,7 +29,7 @@ node
     
       stage('Sonar Analysis') 
 	{
-		withSonarQubeEnv(credentialsId: 'sonar', installationName: 'sonar') 
+		withSonarQubeEnv(credentialsId: '9bc9daa1-8e09-48b8-8b94-3cf4de5ed195', installationName: 'sonar') 
 		{
 		    def mvn = tool 'mvn'
 			sh 'mvn clean package sonar:sonar'
